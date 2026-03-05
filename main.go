@@ -1,19 +1,42 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"todo_api/app/config"
+	"todo_api/app/database"
+	"todo_api/app/middleware"
+	"todo_api/modules/todo"
+
+	"github.com/gin-gonic/gin"
+)
+
+type DTO struct {
+	Name string `json:"name" binding:"required"`
+}
 
 func main() {
-	router := gin.Default()
-	router.SetTrustedProxies(nil)
-	router.GET("/", func(ctx *gin.Context) {
+	// app setup
+	cfg := config.Load()
+	db := database.InitSqliteDB(cfg)
+	r := gin.Default()
+	r.SetTrustedProxies(nil)
 
-		// ctx.JSON(200, map[string]any{"message": "Todo API is running!", "status": "success"})
-		// or
-		ctx.JSON(200, gin.H{
-			"message": "Todo API is running!",
-			"status":  "success",
-		},
-		)
+	// global middlewares
+	r.Use(middleware.ErrorHandler())
+
+	// api root
+	api := r.Group("/api")
+
+	r.GET("/health", func(ctx *gin.Context) {
+		ctx.JSON(200, "ok")
 	})
-	router.Run()
+
+	r.GET("/health3", func(ctx *gin.Context) {
+		ctx.JSON(200, "ok")
+	})
+
+	// modules setup
+	todo.NewModule(db, cfg, api).Register()
+
+	// run server
+	r.Run(":" + cfg.AppPort)
 }

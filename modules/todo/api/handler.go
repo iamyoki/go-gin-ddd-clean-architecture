@@ -24,7 +24,7 @@ type CreateDTO struct {
 func (h *todoHandler) Create(c *gin.Context) {
 	var dto CreateDTO
 
-	if err := c.ShouldBindBodyWithJSON(&dto); err != nil {
+	if err := c.ShouldBind(&dto); err != nil {
 		c.Error(err)
 		return
 	}

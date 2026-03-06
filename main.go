@@ -1,12 +1,15 @@
 package main
 
 import (
+	"time"
 	"todo_api/app/config"
 	"todo_api/app/database"
+	"todo_api/app/logger"
 	"todo_api/app/middleware"
 	"todo_api/modules/todo"
 
 	"github.com/gin-gonic/gin"
+	sloggin "github.com/samber/slog-gin"
 )
 
 type DTO struct {
@@ -17,20 +20,21 @@ func main() {
 	// app setup
 	cfg := config.Load()
 	db := database.InitSqliteDB(cfg)
-	r := gin.Default()
+	logger := logger.InitLogger()
+	r := gin.New()
 	r.SetTrustedProxies(nil)
 
 	// global middlewares
+	r.Use(gin.Recovery())
+	r.Use(sloggin.New(logger))
 	r.Use(middleware.ErrorHandler())
+	r.Use(middleware.LimitMax(50))              // 50MB
+	r.Use(middleware.Timeout(10 * time.Second)) // 10s
 
 	// api root
 	api := r.Group("/api")
 
-	r.GET("/health", func(ctx *gin.Context) {
-		ctx.JSON(200, "ok")
-	})
-
-	r.GET("/health3", func(ctx *gin.Context) {
+	api.GET("/health", func(ctx *gin.Context) {
 		ctx.JSON(200, "ok")
 	})
 

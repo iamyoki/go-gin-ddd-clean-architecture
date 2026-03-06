@@ -9,12 +9,13 @@ import (
 )
 
 type (
-	BadRequest     struct{ Msg string }
-	Unauthorized   struct{ Msg string }
-	Forbidden      struct{ Msg string }
-	NotFound       struct{ Msg string }
-	RequestTimeout struct{ Msg string }
-	Conflict       struct{ Msg string }
+	BadRequest      struct{ Msg string }
+	Unauthorized    struct{ Msg string }
+	Forbidden       struct{ Msg string }
+	NotFound        struct{ Msg string }
+	RequestTimeout  struct{ Msg string }
+	Conflict        struct{ Msg string }
+	RequestTooLarge struct{ Msg string }
 	// Internal       struct{ Msg string }
 	Validation struct {
 		Msg     string
@@ -22,12 +23,13 @@ type (
 	}
 )
 
-func (err *BadRequest) Error() string     { return err.Msg }
-func (err *Unauthorized) Error() string   { return err.Msg }
-func (err *Forbidden) Error() string      { return err.Msg }
-func (err *NotFound) Error() string       { return err.Msg }
-func (err *RequestTimeout) Error() string { return err.Msg }
-func (err *Conflict) Error() string       { return err.Msg }
+func (err *BadRequest) Error() string      { return err.Msg }
+func (err *Unauthorized) Error() string    { return err.Msg }
+func (err *Forbidden) Error() string       { return err.Msg }
+func (err *NotFound) Error() string        { return err.Msg }
+func (err *RequestTimeout) Error() string  { return err.Msg }
+func (err *Conflict) Error() string        { return err.Msg }
+func (err *RequestTooLarge) Error() string { return err.Msg }
 
 // func (err *Internal) Error() string       { return "Internal Server Error" }
 func (err *Validation) Error() string { return err.Msg }
@@ -38,10 +40,13 @@ func IntoResponse(err error) (int, gin.H) {
 	error := "Internal"
 	msg := err.Error()
 
-	// turn gin error into apperror
+	// turn error into apperror
 	switch err.(type) {
 	case validator.ValidationErrors:
 		err = &Validation{Msg: "Invalid request parameters"}
+		msg = err.Error()
+	case *http.MaxBytesError:
+		err = &RequestTooLarge{Msg: "Request too large"}
 		msg = err.Error()
 	}
 
@@ -65,6 +70,9 @@ func IntoResponse(err error) (int, gin.H) {
 	case *Conflict:
 		status = http.StatusConflict
 		error = "Conflict"
+	case *RequestTooLarge:
+		status = http.StatusRequestEntityTooLarge
+		error = "RequestEntityTooLarge"
 	case *Validation:
 		status = http.StatusBadRequest
 		error = "Validation"

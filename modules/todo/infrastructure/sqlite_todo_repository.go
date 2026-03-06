@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 	apperror "todo_api/app/error"
@@ -37,7 +38,7 @@ func (s *sqliteTodoRepository) Save(ctx context.Context, todo *domain.Todo) erro
 	err := gorm.G[TodoEntity](s.db, clause.OnConflict{UpdateAll: true}).Create(ctx, &todoEntity)
 
 	if err != nil && strings.Contains(err.Error(), "UNIQUE") {
-		return &apperror.Conflict{Msg: "The `title` already exists"}
+		return &apperror.Conflict{Msg: fmt.Sprintf("The title `%s` already exists", todo.Title)}
 	}
 
 	return err

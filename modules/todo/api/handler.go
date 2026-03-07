@@ -13,21 +13,24 @@ import (
 type todoHandler struct {
 	createTodoUseCase   *usecase.CreateTodoUseCase
 	getAllTodosUseCase  *usecase.GetAllTodosUseCase
-	getTodoByIdUseCase  *usecase.GetTodoByIdUseCase
+	getTodoByIdUseCase  *usecase.GetTodoUseCase
 	completeTodoUseCase *usecase.CompleteTodoUseCase
+	deleteTodoUseCase   *usecase.DeleteTodoUseCase
 }
 
 func NewTodoHandler(
 	createTodoUseCase *usecase.CreateTodoUseCase,
 	getAllTodosUseCase *usecase.GetAllTodosUseCase,
-	getTodoByIdUseCase *usecase.GetTodoByIdUseCase,
+	getTodoByIdUseCase *usecase.GetTodoUseCase,
 	completeTodoUseCase *usecase.CompleteTodoUseCase,
+	deleteTodoUseCase *usecase.DeleteTodoUseCase,
 ) *todoHandler {
 	return &todoHandler{
 		createTodoUseCase:   createTodoUseCase,
 		getAllTodosUseCase:  getAllTodosUseCase,
 		getTodoByIdUseCase:  getTodoByIdUseCase,
 		completeTodoUseCase: completeTodoUseCase,
+		deleteTodoUseCase:   deleteTodoUseCase,
 	}
 }
 
@@ -132,6 +135,33 @@ func (h *todoHandler) Complete(c *gin.Context) {
 	}
 
 	todo, err := h.completeTodoUseCase.Execute(c.Request.Context(), id)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, ResponseDTO{
+		Id:          todo.ID,
+		Title:       todo.Title,
+		Completed:   todo.Completed,
+		CreatedAt:   todo.CreatedAt,
+		UpdatedAt:   todo.UpdatedAt,
+		CompletedAt: todo.CompletedAt,
+	})
+}
+
+func (h *todoHandler) Delete(c *gin.Context) {
+	idStr := c.Param("id")
+
+	id, err := uuid.Parse(idStr)
+
+	if err != nil {
+		c.Error(&apperror.BadRequest{Msg: "Invalid ID"})
+		return
+	}
+
+	todo, err := h.deleteTodoUseCase.Execute(c.Request.Context(), id)
 
 	if err != nil {
 		c.Error(err)

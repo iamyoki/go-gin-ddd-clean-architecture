@@ -1,14 +1,14 @@
 info:
-  name: complete todo
+  name: delete todo
   type: http
-  seq: 5
+  seq: 6
 
 http:
-  method: POST
-  url: http://localhost:8080/api/todos/:id/complete
+  method: DELETE
+  url: http://localhost:8080/api/todos/:id
   params:
     - name: id
-      value: a48a2c59-eee7-41ce-aec4-ec00bb941af3
+      value: 262fbac7-50b9-4a61-9621-d449ad936d3c
       type: path
   auth: inherit
 

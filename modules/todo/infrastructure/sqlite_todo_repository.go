@@ -27,6 +27,34 @@ type sqliteTodoRepository struct {
 	db *gorm.DB
 }
 
+// DeleteById implements [domain.TodoRepositoryInterface].
+func (s *sqliteTodoRepository) DeleteById(ctx context.Context, id uuid.UUID) (*domain.Todo, error) {
+	var todo *domain.Todo
+
+	err := s.db.Transaction(func(tx *gorm.DB) error {
+		txRepo := *s
+		txRepo.db = tx
+
+		if t, err := txRepo.FindById(ctx, id); err != nil {
+			return err
+		} else {
+			todo = t
+		}
+
+		if _, err := gorm.G[TodoEntity](tx).Where("id = ?", id).Delete(ctx); err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return todo, nil
+}
+
 // FindById implements [domain.TodoRepositoryInterface].
 func (s *sqliteTodoRepository) FindById(ctx context.Context, id uuid.UUID) (*domain.Todo, error) {
 	todo, err := gorm.G[TodoEntity](s.db).Where("id = ?", id).First(ctx)

@@ -9,4 +9,5 @@ func RegisterTodoRouter(r *gin.RouterGroup, h *todoHandler) {
 	g.GET("", h.GetAll)
 	g.GET(":id", h.GetById)
 	g.POST(":id/complete", h.Complete)
+	g.DELETE(":id", h.Delete)
 }

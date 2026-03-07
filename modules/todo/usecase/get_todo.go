@@ -7,10 +7,10 @@ import (
 	"github.com/google/uuid"
 )
 
-type GetTodoByIdUseCase struct {
+type GetTodoUseCase struct {
 	Repo domain.TodoRepositoryInterface
 }
 
-func (usecase *GetTodoByIdUseCase) Execute(ctx context.Context, id uuid.UUID) (*domain.Todo, error) {
+func (usecase *GetTodoUseCase) Execute(ctx context.Context, id uuid.UUID) (*domain.Todo, error) {
 	return usecase.Repo.FindById(ctx, id)
 }

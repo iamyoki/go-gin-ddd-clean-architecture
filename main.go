@@ -27,9 +27,9 @@ func main() {
 	// global middlewares
 	r.Use(gin.Recovery())
 	r.Use(sloggin.New(logger))
-	r.Use(middleware.ErrorHandler())
-	r.Use(middleware.LimitMax(50))              // 50MB
 	r.Use(middleware.Timeout(10 * time.Second)) // 10s
+	r.Use(middleware.ErrorHandler())
+	r.Use(middleware.LimitMax(50)) // 50MB
 
 	// api root
 	api := r.Group("/api")

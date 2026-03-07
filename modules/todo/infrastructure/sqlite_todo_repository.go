@@ -25,6 +25,29 @@ type sqliteTodoRepository struct {
 	db *gorm.DB
 }
 
+// FindAll implements [domain.TodoRepositoryInterface].
+func (s *sqliteTodoRepository) FindAll(ctx context.Context) ([]domain.Todo, error) {
+	todoEntities, err := gorm.G[TodoEntity](s.db).Find(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	todos := make([]domain.Todo, 0, len(todoEntities))
+
+	for _, e := range todoEntities {
+		todos = append(todos, domain.Todo{
+			ID:        e.ID,
+			Title:     e.Title,
+			Completed: e.Completed,
+			CreatedAt: e.CreatedAt,
+			UpdatedAt: e.UpdatedAt,
+		})
+	}
+
+	return todos, nil
+}
+
 // Save implements [domain.TodoRepositoryInterface].
 func (s *sqliteTodoRepository) Save(ctx context.Context, todo *domain.Todo) error {
 	todoEntity := TodoEntity{

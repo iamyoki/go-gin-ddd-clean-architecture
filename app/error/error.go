@@ -13,7 +13,6 @@ type (
 	Unauthorized    struct{ Msg string }
 	Forbidden       struct{ Msg string }
 	NotFound        struct{ Msg string }
-	RequestTimeout  struct{ Msg string }
 	Conflict        struct{ Msg string }
 	RequestTooLarge struct{ Msg string }
 	// Internal       struct{ Msg string }
@@ -27,7 +26,6 @@ func (err *BadRequest) Error() string      { return err.Msg }
 func (err *Unauthorized) Error() string    { return err.Msg }
 func (err *Forbidden) Error() string       { return err.Msg }
 func (err *NotFound) Error() string        { return err.Msg }
-func (err *RequestTimeout) Error() string  { return err.Msg }
 func (err *Conflict) Error() string        { return err.Msg }
 func (err *RequestTooLarge) Error() string { return err.Msg }
 
@@ -64,9 +62,6 @@ func IntoResponse(err error) (int, gin.H) {
 	case *NotFound:
 		status = http.StatusNotFound
 		error = "NotFound"
-	case *RequestTimeout:
-		status = http.StatusRequestTimeout
-		error = "RequestTimeout"
 	case *Conflict:
 		status = http.StatusConflict
 		error = "Conflict"

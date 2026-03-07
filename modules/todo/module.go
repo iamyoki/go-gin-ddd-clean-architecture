@@ -31,7 +31,9 @@ func (m *module) Register() {
 
 	createTodoUseCase := usecase.NewCreateTodoUseCase(todoRepo)
 
-	todoHandler := api.NewTodoHandler(createTodoUseCase)
+	getAllTodosUseCase := usecase.NewGetAllTodosUseCase(todoRepo)
+
+	todoHandler := api.NewTodoHandler(createTodoUseCase, getAllTodosUseCase)
 
 	api.RegisterTodoRouter(m.r, todoHandler)
 }

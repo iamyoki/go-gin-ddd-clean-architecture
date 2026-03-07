@@ -1,0 +1,19 @@
+info:
+  name: complete todo
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: http://localhost:8080/api/todos/:id/complete
+  params:
+    - name: id
+      value: 262fbac7-50b9-4a61-9621-d449ad936d3c
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

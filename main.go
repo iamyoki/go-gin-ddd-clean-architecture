@@ -1,7 +1,6 @@
 package main
 
 import (
-	"time"
 	"todo_api/app/config"
 	"todo_api/app/database"
 	"todo_api/app/logger"
@@ -27,7 +26,6 @@ func main() {
 	// global middlewares
 	r.Use(gin.Recovery())
 	r.Use(sloggin.New(logger))
-	r.Use(middleware.Timeout(10 * time.Second)) // 10s
 	r.Use(middleware.ErrorHandler())
 	r.Use(middleware.LimitMax(50)) // 50MB
 

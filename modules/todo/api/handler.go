@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"time"
+	apperror "todo_api/app/error"
 	"todo_api/modules/todo/usecase"
 
 	"github.com/gin-gonic/gin"
@@ -10,14 +11,23 @@ import (
 )
 
 type todoHandler struct {
-	createTodoUseCase  *usecase.CreateTodoUseCase
-	getAllTodosUseCase *usecase.GetAllTodosUseCase
+	createTodoUseCase   *usecase.CreateTodoUseCase
+	getAllTodosUseCase  *usecase.GetAllTodosUseCase
+	getTodoByIdUseCase  *usecase.GetTodoByIdUseCase
+	completeTodoUseCase *usecase.CompleteTodoUseCase
 }
 
-func NewTodoHandler(createTodoUseCase *usecase.CreateTodoUseCase, getAllTodosUseCase *usecase.GetAllTodosUseCase) *todoHandler {
+func NewTodoHandler(
+	createTodoUseCase *usecase.CreateTodoUseCase,
+	getAllTodosUseCase *usecase.GetAllTodosUseCase,
+	getTodoByIdUseCase *usecase.GetTodoByIdUseCase,
+	completeTodoUseCase *usecase.CompleteTodoUseCase,
+) *todoHandler {
 	return &todoHandler{
-		createTodoUseCase:  createTodoUseCase,
-		getAllTodosUseCase: getAllTodosUseCase,
+		createTodoUseCase:   createTodoUseCase,
+		getAllTodosUseCase:  getAllTodosUseCase,
+		getTodoByIdUseCase:  getTodoByIdUseCase,
+		completeTodoUseCase: completeTodoUseCase,
 	}
 }
 
@@ -26,11 +36,12 @@ type CreateDTO struct {
 }
 
 type ResponseDTO struct {
-	Id        uuid.UUID `json:"id"`
-	Title     string    `json:"title"`
-	Completed bool      `json:"completed"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Id          uuid.UUID  `json:"id"`
+	Title       string     `json:"title"`
+	Completed   bool       `json:"completed"`
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   time.Time  `json:"updated_at"`
+	CompletedAt *time.Time `json:"completed_at"`
 }
 
 func (h *todoHandler) Create(c *gin.Context) {
@@ -49,16 +60,18 @@ func (h *todoHandler) Create(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, ResponseDTO{
-		Id:        todo.ID,
-		Title:     todo.Title,
-		Completed: todo.Completed,
-		CreatedAt: todo.CreatedAt,
-		UpdatedAt: todo.UpdatedAt,
+		Id:          todo.ID,
+		Title:       todo.Title,
+		Completed:   todo.Completed,
+		CreatedAt:   todo.CreatedAt,
+		UpdatedAt:   todo.UpdatedAt,
+		CompletedAt: todo.CompletedAt,
 	})
+
 }
 
 func (h *todoHandler) GetAll(c *gin.Context) {
-	todos, err := h.getAllTodosUseCase.Execute(c)
+	todos, err := h.getAllTodosUseCase.Execute(c.Request.Context())
 
 	if err != nil {
 		c.Error(err)
@@ -69,13 +82,68 @@ func (h *todoHandler) GetAll(c *gin.Context) {
 
 	for _, todo := range todos {
 		data = append(data, ResponseDTO{
-			Id:        todo.ID,
-			Title:     todo.Title,
-			Completed: todo.Completed,
-			CreatedAt: todo.CreatedAt,
-			UpdatedAt: todo.UpdatedAt,
+			Id:          todo.ID,
+			Title:       todo.Title,
+			Completed:   todo.Completed,
+			CreatedAt:   todo.CreatedAt,
+			UpdatedAt:   todo.UpdatedAt,
+			CompletedAt: todo.CompletedAt,
 		})
 	}
 
 	c.JSON(http.StatusOK, data)
+}
+
+func (h *todoHandler) GetById(c *gin.Context) {
+	idStr := c.Param("id")
+
+	id, err := uuid.Parse(idStr)
+
+	if err != nil {
+		c.Error(&apperror.BadRequest{Msg: "Invalid ID"})
+		return
+	}
+
+	todo, err := h.getTodoByIdUseCase.Execute(c.Request.Context(), id)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, ResponseDTO{
+		Id:          todo.ID,
+		Title:       todo.Title,
+		Completed:   todo.Completed,
+		CreatedAt:   todo.CreatedAt,
+		UpdatedAt:   todo.UpdatedAt,
+		CompletedAt: todo.CompletedAt,
+	})
+}
+
+func (h *todoHandler) Complete(c *gin.Context) {
+	idStr := c.Param("id")
+
+	id, err := uuid.Parse(idStr)
+
+	if err != nil {
+		c.Error(&apperror.BadRequest{Msg: "Invalid ID"})
+		return
+	}
+
+	todo, err := h.completeTodoUseCase.Execute(c.Request.Context(), id)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, ResponseDTO{
+		Id:          todo.ID,
+		Title:       todo.Title,
+		Completed:   todo.Completed,
+		CreatedAt:   todo.CreatedAt,
+		UpdatedAt:   todo.UpdatedAt,
+		CompletedAt: todo.CompletedAt,
+	})
 }

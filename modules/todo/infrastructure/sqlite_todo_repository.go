@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -14,15 +15,38 @@ import (
 )
 
 type TodoEntity struct {
-	ID        uuid.UUID
-	Title     string `gorm:"uniqueIndex;not null"`
-	Completed bool
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID          uuid.UUID
+	Title       string `gorm:"uniqueIndex;not null"`
+	Completed   bool
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	CompletedAt *time.Time
 }
 
 type sqliteTodoRepository struct {
 	db *gorm.DB
+}
+
+// FindById implements [domain.TodoRepositoryInterface].
+func (s *sqliteTodoRepository) FindById(ctx context.Context, id uuid.UUID) (*domain.Todo, error) {
+	todo, err := gorm.G[TodoEntity](s.db).Where("id = ?", id).First(ctx)
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, &apperror.NotFound{Msg: "todo id not found"}
+		}
+
+		return nil, err
+	}
+
+	return &domain.Todo{
+		ID:          todo.ID,
+		Title:       todo.Title,
+		Completed:   todo.Completed,
+		CreatedAt:   todo.CreatedAt,
+		UpdatedAt:   todo.UpdatedAt,
+		CompletedAt: todo.CompletedAt,
+	}, nil
 }
 
 // FindAll implements [domain.TodoRepositoryInterface].
@@ -37,11 +61,12 @@ func (s *sqliteTodoRepository) FindAll(ctx context.Context) ([]domain.Todo, erro
 
 	for _, e := range todoEntities {
 		todos = append(todos, domain.Todo{
-			ID:        e.ID,
-			Title:     e.Title,
-			Completed: e.Completed,
-			CreatedAt: e.CreatedAt,
-			UpdatedAt: e.UpdatedAt,
+			ID:          e.ID,
+			Title:       e.Title,
+			Completed:   e.Completed,
+			CreatedAt:   e.CreatedAt,
+			UpdatedAt:   e.UpdatedAt,
+			CompletedAt: e.CompletedAt,
 		})
 	}
 
@@ -51,11 +76,12 @@ func (s *sqliteTodoRepository) FindAll(ctx context.Context) ([]domain.Todo, erro
 // Save implements [domain.TodoRepositoryInterface].
 func (s *sqliteTodoRepository) Save(ctx context.Context, todo *domain.Todo) error {
 	todoEntity := TodoEntity{
-		ID:        todo.ID,
-		Title:     todo.Title,
-		Completed: todo.Completed,
-		CreatedAt: todo.CreatedAt,
-		UpdatedAt: todo.UpdatedAt,
+		ID:          todo.ID,
+		Title:       todo.Title,
+		Completed:   todo.Completed,
+		CreatedAt:   todo.CreatedAt,
+		UpdatedAt:   todo.UpdatedAt,
+		CompletedAt: todo.CompletedAt,
 	}
 
 	err := gorm.G[TodoEntity](s.db, clause.OnConflict{UpdateAll: true}).Create(ctx, &todoEntity)

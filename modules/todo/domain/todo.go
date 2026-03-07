@@ -2,16 +2,18 @@ package domain
 
 import (
 	"time"
+	apperror "todo_api/app/error"
 
 	"github.com/google/uuid"
 )
 
 type Todo struct {
-	ID        uuid.UUID
-	Title     string
-	Completed bool
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID          uuid.UUID
+	Title       string
+	Completed   bool
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	CompletedAt *time.Time
 }
 
 func Create(title string) *Todo {
@@ -24,7 +26,14 @@ func Create(title string) *Todo {
 	}
 }
 
-func (todo *Todo) Complete() {
+func (todo *Todo) Complete() error {
+	if todo.Completed {
+		return &apperror.BadRequest{Msg: "todo already completed"}
+	}
+
 	todo.Completed = true
-	todo.UpdatedAt = time.Now()
+	now := time.Now()
+	todo.UpdatedAt = now
+	todo.CompletedAt = &now
+	return nil
 }

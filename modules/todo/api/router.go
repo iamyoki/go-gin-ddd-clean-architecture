@@ -7,4 +7,6 @@ func RegisterTodoRouter(r *gin.RouterGroup, h *todoHandler) {
 
 	g.POST("", h.Create)
 	g.GET("", h.GetAll)
+	g.GET(":id", h.GetById)
+	g.POST(":id/complete", h.Complete)
 }

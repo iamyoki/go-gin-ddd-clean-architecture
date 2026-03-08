@@ -5,7 +5,8 @@ import (
 	"todo_api/app/database"
 	"todo_api/app/logger"
 	"todo_api/app/middleware"
-	"todo_api/modules/todo"
+	"todo_api/module/iam"
+	"todo_api/module/todo"
 
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
@@ -38,6 +39,7 @@ func main() {
 
 	// modules setup
 	todo.NewModule(db, cfg, api).Register()
+	iam.NewModule(db, cfg, api).Register()
 
 	// run server
 	r.Run(":" + cfg.AppPort)

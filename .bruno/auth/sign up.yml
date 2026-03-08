@@ -1,0 +1,22 @@
+info:
+  name: sign up
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:8080/api/auth/sign-up
+  body:
+    type: json
+    data: |-
+      {
+        "email": "admin@api.com",
+        "password": "adminadmin"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,4 +1,4 @@
-package domain
+package todo
 
 import (
 	"time"
@@ -17,12 +17,13 @@ type Todo struct {
 }
 
 func Create(title string) *Todo {
+	now := time.Now()
 	return &Todo{
 		ID:        uuid.New(),
 		Title:     title,
 		Completed: false,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: now,
+		UpdatedAt: now,
 	}
 }
 

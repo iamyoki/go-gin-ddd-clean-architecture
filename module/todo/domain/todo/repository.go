@@ -1,4 +1,4 @@
-package domain
+package todo
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type TodoRepositoryInterface interface {
+type Repository interface {
 	Save(ctx context.Context, todo *Todo) error
 	FindAll(ctx context.Context) ([]Todo, error)
 	FindById(ctx context.Context, id uuid.UUID) (*Todo, error)

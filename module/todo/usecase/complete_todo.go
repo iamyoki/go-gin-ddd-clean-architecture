@@ -2,16 +2,16 @@ package usecase
 
 import (
 	"context"
-	"todo_api/modules/todo/domain"
+	"todo_api/module/todo/domain/todo"
 
 	"github.com/google/uuid"
 )
 
-type CompleteTodoUseCase struct {
-	Repo domain.TodoRepositoryInterface
+type CompleteTodo struct {
+	Repo todo.Repository
 }
 
-func (usecase *CompleteTodoUseCase) Execute(ctx context.Context, id uuid.UUID) (*domain.Todo, error) {
+func (usecase *CompleteTodo) Execute(ctx context.Context, id uuid.UUID) (*todo.Todo, error) {
 	todo, err := usecase.Repo.FindById(ctx, id)
 
 	if err != nil {

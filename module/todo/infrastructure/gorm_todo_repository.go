@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 	apperror "todo_api/app/error"
-	"todo_api/modules/todo/domain"
+	"todo_api/module/todo/domain/todo"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -23,13 +23,13 @@ type TodoEntity struct {
 	CompletedAt *time.Time
 }
 
-type sqliteTodoRepository struct {
+type gormTodoRepository struct {
 	db *gorm.DB
 }
 
-// DeleteById implements [domain.TodoRepositoryInterface].
-func (s *sqliteTodoRepository) DeleteById(ctx context.Context, id uuid.UUID) (*domain.Todo, error) {
-	var todo *domain.Todo
+// DeleteById implements [todo.TodoRepositoryInterface].
+func (s *gormTodoRepository) DeleteById(ctx context.Context, id uuid.UUID) (*todo.Todo, error) {
+	var todo *todo.Todo
 
 	err := s.db.Transaction(func(tx *gorm.DB) error {
 		txRepo := *s
@@ -55,40 +55,40 @@ func (s *sqliteTodoRepository) DeleteById(ctx context.Context, id uuid.UUID) (*d
 	return todo, nil
 }
 
-// FindById implements [domain.TodoRepositoryInterface].
-func (s *sqliteTodoRepository) FindById(ctx context.Context, id uuid.UUID) (*domain.Todo, error) {
-	todo, err := gorm.G[TodoEntity](s.db).Where("id = ?", id).First(ctx)
+// FindById implements [todo.TodoRepositoryInterface].
+func (s *gormTodoRepository) FindById(ctx context.Context, id uuid.UUID) (*todo.Todo, error) {
+	todoEntity, err := gorm.G[TodoEntity](s.db).Where("id = ?", id).First(ctx)
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, &apperror.NotFound{Msg: "todo id not found"}
+			return nil, &apperror.NotFound{Msg: "Todo id not found"}
 		}
 
 		return nil, err
 	}
 
-	return &domain.Todo{
-		ID:          todo.ID,
-		Title:       todo.Title,
-		Completed:   todo.Completed,
-		CreatedAt:   todo.CreatedAt,
-		UpdatedAt:   todo.UpdatedAt,
-		CompletedAt: todo.CompletedAt,
+	return &todo.Todo{
+		ID:          todoEntity.ID,
+		Title:       todoEntity.Title,
+		Completed:   todoEntity.Completed,
+		CreatedAt:   todoEntity.CreatedAt,
+		UpdatedAt:   todoEntity.UpdatedAt,
+		CompletedAt: todoEntity.CompletedAt,
 	}, nil
 }
 
-// FindAll implements [domain.TodoRepositoryInterface].
-func (s *sqliteTodoRepository) FindAll(ctx context.Context) ([]domain.Todo, error) {
+// FindAll implements [todo.TodoRepositoryInterface].
+func (s *gormTodoRepository) FindAll(ctx context.Context) ([]todo.Todo, error) {
 	todoEntities, err := gorm.G[TodoEntity](s.db).Find(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	todos := make([]domain.Todo, 0, len(todoEntities))
+	todos := make([]todo.Todo, 0, len(todoEntities))
 
 	for _, e := range todoEntities {
-		todos = append(todos, domain.Todo{
+		todos = append(todos, todo.Todo{
 			ID:          e.ID,
 			Title:       e.Title,
 			Completed:   e.Completed,
@@ -101,8 +101,8 @@ func (s *sqliteTodoRepository) FindAll(ctx context.Context) ([]domain.Todo, erro
 	return todos, nil
 }
 
-// Save implements [domain.TodoRepositoryInterface].
-func (s *sqliteTodoRepository) Save(ctx context.Context, todo *domain.Todo) error {
+// Save implements [todo.TodoRepositoryInterface].
+func (s *gormTodoRepository) Save(ctx context.Context, todo *todo.Todo) error {
 	todoEntity := TodoEntity{
 		ID:          todo.ID,
 		Title:       todo.Title,
@@ -121,8 +121,8 @@ func (s *sqliteTodoRepository) Save(ctx context.Context, todo *domain.Todo) erro
 	return err
 }
 
-func NewSqliteTodoRepository(db *gorm.DB) domain.TodoRepositoryInterface {
-	return &sqliteTodoRepository{
+func NewGormTodoRepository(db *gorm.DB) todo.Repository {
+	return &gormTodoRepository{
 		db: db,
 	}
 }

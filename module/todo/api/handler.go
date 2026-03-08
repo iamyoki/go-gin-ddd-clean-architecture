@@ -4,26 +4,26 @@ import (
 	"net/http"
 	"time"
 	apperror "todo_api/app/error"
-	"todo_api/modules/todo/usecase"
+	"todo_api/module/todo/usecase"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type todoHandler struct {
-	createTodoUseCase   *usecase.CreateTodoUseCase
-	getAllTodosUseCase  *usecase.GetAllTodosUseCase
-	getTodoByIdUseCase  *usecase.GetTodoUseCase
-	completeTodoUseCase *usecase.CompleteTodoUseCase
-	deleteTodoUseCase   *usecase.DeleteTodoUseCase
+	createTodoUseCase   *usecase.CreateTodo
+	getAllTodosUseCase  *usecase.GetAllTodos
+	getTodoByIdUseCase  *usecase.GetTodo
+	completeTodoUseCase *usecase.CompleteTodo
+	deleteTodoUseCase   *usecase.DeleteTodo
 }
 
 func NewTodoHandler(
-	createTodoUseCase *usecase.CreateTodoUseCase,
-	getAllTodosUseCase *usecase.GetAllTodosUseCase,
-	getTodoByIdUseCase *usecase.GetTodoUseCase,
-	completeTodoUseCase *usecase.CompleteTodoUseCase,
-	deleteTodoUseCase *usecase.DeleteTodoUseCase,
+	createTodoUseCase *usecase.CreateTodo,
+	getAllTodosUseCase *usecase.GetAllTodos,
+	getTodoByIdUseCase *usecase.GetTodo,
+	completeTodoUseCase *usecase.CompleteTodo,
+	deleteTodoUseCase *usecase.DeleteTodo,
 ) *todoHandler {
 	return &todoHandler{
 		createTodoUseCase:   createTodoUseCase,
@@ -47,7 +47,7 @@ type ResponseDTO struct {
 	CompletedAt *time.Time `json:"completed_at"`
 }
 
-func (h *todoHandler) Create(c *gin.Context) {
+func (h *todoHandler) HandleCreate(c *gin.Context) {
 	var dto CreateDTO
 
 	if err := c.ShouldBind(&dto); err != nil {
@@ -73,7 +73,7 @@ func (h *todoHandler) Create(c *gin.Context) {
 
 }
 
-func (h *todoHandler) GetAll(c *gin.Context) {
+func (h *todoHandler) HandleGetAll(c *gin.Context) {
 	todos, err := h.getAllTodosUseCase.Execute(c.Request.Context())
 
 	if err != nil {
@@ -97,7 +97,7 @@ func (h *todoHandler) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 }
 
-func (h *todoHandler) GetById(c *gin.Context) {
+func (h *todoHandler) HandleGetById(c *gin.Context) {
 	idStr := c.Param("id")
 
 	id, err := uuid.Parse(idStr)
@@ -124,7 +124,7 @@ func (h *todoHandler) GetById(c *gin.Context) {
 	})
 }
 
-func (h *todoHandler) Complete(c *gin.Context) {
+func (h *todoHandler) HandleComplete(c *gin.Context) {
 	idStr := c.Param("id")
 
 	id, err := uuid.Parse(idStr)
@@ -151,7 +151,7 @@ func (h *todoHandler) Complete(c *gin.Context) {
 	})
 }
 
-func (h *todoHandler) Delete(c *gin.Context) {
+func (h *todoHandler) HandleDelete(c *gin.Context) {
 	idStr := c.Param("id")
 
 	id, err := uuid.Parse(idStr)

@@ -3,6 +3,7 @@ package iam
 import (
 	"todo_api/app/config"
 	"todo_api/module/iam/api"
+	"todo_api/module/iam/constant"
 	"todo_api/module/iam/infrastructure"
 	"todo_api/module/iam/usecase"
 
@@ -27,17 +28,31 @@ func NewModule(db *gorm.DB, config *config.Config, r *gin.RouterGroup) *module {
 func (m *module) Register() {
 	m.db.AutoMigrate(&infrastructure.UserEntity{})
 
+	// infra
 	userRepo := &infrastructure.GormUserRepository{DB: m.db}
-
 	bcryptHasher := &infrastructure.BcryptHasher{}
+	jwtAuthToken := &infrastructure.JWTAuthToken{
+		Secret:                []byte(m.config.JWTSecret),
+		AccessTokenExpiresIn:  constant.AccessTokenExpiresIn,
+		RefreshTokenExpiresIn: constant.RefreshTokenExpiresIn,
+		UserRepo:              userRepo,
+	}
 
+	// usecase
 	signUp := &usecase.SignUp{
 		Repo:   userRepo,
 		Hasher: bcryptHasher,
 	}
+	signIn := &usecase.SignIn{
+		Repo:      userRepo,
+		Hasher:    bcryptHasher,
+		AuthToken: jwtAuthToken,
+	}
 
+	// api
 	handler := &api.Handler{
 		SignUp: signUp,
+		SignIn: signIn,
 	}
 
 	api.RegisterRouter(m.r, handler)

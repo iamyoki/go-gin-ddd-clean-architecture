@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	apperror "todo_api/app/error"
+	"todo_api/app/apperror"
 	"todo_api/module/todo/domain/todo"
 
 	"github.com/google/uuid"

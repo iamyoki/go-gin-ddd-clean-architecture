@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	DB      string
-	AppPort string
+	DB        string
+	AppPort   string
+	JWTSecret string
 }
 
 func getEnv(key, defaultValue string) string {
@@ -27,7 +28,8 @@ func Load() *Config {
 	}
 
 	return &Config{
-		DB:      getEnv("DB", "data.db"),
-		AppPort: getEnv("PORT", "8080"),
+		DB:        getEnv("DB", "data.db"),
+		AppPort:   getEnv("PORT", "8080"),
+		JWTSecret: getEnv("JWT_SECRET", "mysecret"),
 	}
 }

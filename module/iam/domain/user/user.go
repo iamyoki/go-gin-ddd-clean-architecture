@@ -4,7 +4,8 @@ import (
 	"net/mail"
 	"regexp"
 	"time"
-	apperror "todo_api/app/error"
+	"todo_api/app/appcontext"
+	"todo_api/app/apperror"
 
 	"github.com/google/uuid"
 )
@@ -42,4 +43,11 @@ func Create(email string, hashedPassword string) (*User, error) {
 		CreatedAt:      now,
 		UpdatedAt:      now,
 	}, nil
+}
+
+func (user *User) ToActiveUser() appcontext.ActiveUser {
+	return appcontext.ActiveUser{
+		ID:    user.ID,
+		Email: user.Email,
+	}
 }

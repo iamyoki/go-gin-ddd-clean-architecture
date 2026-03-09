@@ -2,7 +2,7 @@ package todo
 
 import (
 	"time"
-	apperror "todo_api/app/error"
+	"todo_api/app/apperror"
 
 	"github.com/google/uuid"
 )

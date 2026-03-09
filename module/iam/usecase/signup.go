@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	apperror "todo_api/app/error"
+	"todo_api/app/apperror"
 	"todo_api/module/iam/domain/user"
 )
 

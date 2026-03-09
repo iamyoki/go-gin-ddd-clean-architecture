@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 	"time"
-	apperror "todo_api/app/error"
+	"todo_api/app/apperror"
 	"todo_api/module/todo/usecase"
 
 	"github.com/gin-gonic/gin"

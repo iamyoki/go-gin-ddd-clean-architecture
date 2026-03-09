@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	apperror "todo_api/app/error"
+	"todo_api/app/apperror"
 
 	"github.com/gin-gonic/gin"
 )

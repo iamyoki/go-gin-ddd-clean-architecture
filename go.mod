@@ -1,4 +1,4 @@
-module todo_api
+module github.com/iamyoki/go-gin-ddd-clean-architecture
 
 go 1.25.0
 

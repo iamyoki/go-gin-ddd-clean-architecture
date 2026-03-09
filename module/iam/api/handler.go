@@ -3,9 +3,10 @@ package api
 import (
 	"net/http"
 	"time"
-	"todo_api/module/iam/constant"
-	"todo_api/module/iam/domain/user"
-	"todo_api/module/iam/usecase"
+
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/iam/constant"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/iam/domain/user"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/iam/usecase"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

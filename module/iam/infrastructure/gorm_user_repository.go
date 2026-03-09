@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"todo_api/app/apperror"
-	"todo_api/module/iam/domain/user"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/apperror"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/iam/domain/user"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"

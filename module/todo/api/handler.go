@@ -3,8 +3,9 @@ package api
 import (
 	"net/http"
 	"time"
-	"todo_api/app/apperror"
-	"todo_api/module/todo/usecase"
+
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/apperror"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/todo/usecase"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

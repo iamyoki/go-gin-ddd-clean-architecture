@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"todo_api/app/apperror"
-	"todo_api/module/todo/domain/todo"
+
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/apperror"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/todo/domain/todo"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"

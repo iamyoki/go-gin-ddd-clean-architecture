@@ -1,7 +1,7 @@
 package api
 
 import (
-	"todo_api/app/middleware"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/middleware"
 
 	"github.com/gin-gonic/gin"
 )

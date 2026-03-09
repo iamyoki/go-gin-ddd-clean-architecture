@@ -2,7 +2,8 @@ package api
 
 import (
 	"strings"
-	"todo_api/module/iam/usecase"
+
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/iam/usecase"
 
 	"github.com/gin-gonic/gin"
 )

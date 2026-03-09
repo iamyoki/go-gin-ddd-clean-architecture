@@ -2,8 +2,9 @@ package usecase
 
 import (
 	"context"
-	"todo_api/app/apperror"
-	"todo_api/module/iam/domain/user"
+
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/apperror"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/iam/domain/user"
 )
 
 type SignUp struct {

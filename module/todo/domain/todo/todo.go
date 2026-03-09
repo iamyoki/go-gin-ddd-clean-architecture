@@ -2,7 +2,8 @@ package todo
 
 import (
 	"time"
-	"todo_api/app/apperror"
+
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/apperror"
 
 	"github.com/google/uuid"
 )

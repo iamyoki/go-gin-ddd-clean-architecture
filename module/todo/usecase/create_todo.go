@@ -2,7 +2,8 @@ package usecase
 
 import (
 	"context"
-	"todo_api/module/todo/domain/todo"
+
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/todo/domain/todo"
 )
 
 type CreateTodo struct {

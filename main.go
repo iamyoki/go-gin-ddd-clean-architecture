@@ -1,12 +1,12 @@
 package main
 
 import (
-	"todo_api/app/config"
-	"todo_api/app/database"
-	"todo_api/app/logger"
-	"todo_api/app/middleware"
-	"todo_api/module/iam"
-	"todo_api/module/todo"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/config"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/database"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/logger"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/middleware"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/iam"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/todo"
 
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"

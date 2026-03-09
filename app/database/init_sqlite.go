@@ -1,7 +1,7 @@
 package database
 
 import (
-	"todo_api/app/config"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/config"
 
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"

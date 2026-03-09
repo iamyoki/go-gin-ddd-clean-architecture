@@ -1,10 +1,10 @@
 package todo
 
 import (
-	"todo_api/app/config"
-	"todo_api/module/todo/api"
-	"todo_api/module/todo/infrastructure"
-	"todo_api/module/todo/usecase"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/config"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/todo/api"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/todo/infrastructure"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/todo/usecase"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

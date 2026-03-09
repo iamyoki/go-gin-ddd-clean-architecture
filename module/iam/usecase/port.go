@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"todo_api/app/appcontext"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/appcontext"
 )
 
 type Hasher interface {

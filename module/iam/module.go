@@ -1,11 +1,11 @@
 package iam
 
 import (
-	"todo_api/app/config"
-	"todo_api/module/iam/api"
-	"todo_api/module/iam/constant"
-	"todo_api/module/iam/infrastructure"
-	"todo_api/module/iam/usecase"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/config"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/iam/api"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/iam/constant"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/iam/infrastructure"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/iam/usecase"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

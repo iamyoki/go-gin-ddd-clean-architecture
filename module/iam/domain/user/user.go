@@ -4,8 +4,9 @@ import (
 	"net/mail"
 	"regexp"
 	"time"
-	"todo_api/app/appcontext"
-	"todo_api/app/apperror"
+
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/appcontext"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/apperror"
 
 	"github.com/google/uuid"
 )

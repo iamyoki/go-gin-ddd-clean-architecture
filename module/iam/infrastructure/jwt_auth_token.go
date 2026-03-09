@@ -3,10 +3,11 @@ package infrastructure
 import (
 	"context"
 	"time"
-	"todo_api/app/appcontext"
-	"todo_api/app/apperror"
-	"todo_api/module/iam/domain/user"
-	"todo_api/module/iam/usecase"
+
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/appcontext"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/app/apperror"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/iam/domain/user"
+	"github.com/iamyoki/go-gin-ddd-clean-architecture/module/iam/usecase"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"

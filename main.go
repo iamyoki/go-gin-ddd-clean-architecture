@@ -33,13 +33,9 @@ func main() {
 	// api root
 	api := r.Group("/api")
 
-	api.GET("/health", func(ctx *gin.Context) {
-		ctx.JSON(200, "ok")
-	})
-
-	// modules setup
-	todo.NewModule(db, cfg, api).Register()
-	iam.NewModule(db, cfg, api).Register()
+	// module init
+	iam.NewModule(db, cfg, api).Init()
+	todo.NewModule(db, cfg, api).Init()
 
 	// run server
 	r.Run(":" + cfg.AppPort)

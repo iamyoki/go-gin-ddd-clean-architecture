@@ -11,31 +11,41 @@ import (
 )
 
 type module struct {
-	db     *gorm.DB
-	config *config.Config
-	r      *gin.RouterGroup
+	db      *gorm.DB
+	config  *config.Config
+	r       *gin.RouterGroup
+	handler *api.Handler
 }
 
 func NewModule(db *gorm.DB, config *config.Config, r *gin.RouterGroup) *module {
+	// infra
+	todoRepo := infrastructure.NewGormTodoRepository(db)
+
+	// usecase
+	createTodo := &usecase.CreateTodo{Repo: todoRepo}
+	getAllTodos := &usecase.GetAllTodos{Repo: todoRepo}
+	getTodo := &usecase.GetTodo{Repo: todoRepo}
+	completeTodo := &usecase.CompleteTodo{Repo: todoRepo}
+	deleteTodo := &usecase.DeleteTodo{Repo: todoRepo}
+
+	// api
+	handler := &api.Handler{
+		CreateTodo:   createTodo,
+		GetAllTodos:  getAllTodos,
+		GetTodo:      getTodo,
+		CompleteTodo: completeTodo,
+		DeleteTodo:   deleteTodo,
+	}
+
 	return &module{
-		db:     db,
-		config: config,
-		r:      r,
+		db:      db,
+		config:  config,
+		r:       r,
+		handler: handler,
 	}
 }
 
-func (m *module) Register() {
+func (m *module) Init() {
 	m.db.AutoMigrate(&infrastructure.TodoEntity{})
-
-	todoRepo := infrastructure.NewGormTodoRepository(m.db)
-
-	createTodoUseCase := usecase.NewCreateTodoUseCase(todoRepo)
-	getAllTodosUseCase := usecase.NewGetAllTodosUseCase(todoRepo)
-	getTodoUseCase := &usecase.GetTodo{Repo: todoRepo}
-	completeTodoUseCase := &usecase.CompleteTodo{Repo: todoRepo}
-	deleteTodoUseCase := &usecase.DeleteTodo{Repo: todoRepo}
-
-	todoHandler := api.NewTodoHandler(createTodoUseCase, getAllTodosUseCase, getTodoUseCase, completeTodoUseCase, deleteTodoUseCase)
-
-	api.RegisterRouter(m.r, todoHandler)
+	api.RegisterRouter(m.r, m.handler)
 }

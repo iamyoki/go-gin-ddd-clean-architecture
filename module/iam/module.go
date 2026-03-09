@@ -12,27 +12,19 @@ import (
 )
 
 type module struct {
-	db     *gorm.DB
-	config *config.Config
-	r      *gin.RouterGroup
+	db                 *gorm.DB
+	config             *config.Config
+	r                  *gin.RouterGroup
+	handler            *api.Handler
+	identifyMiddleware gin.HandlerFunc
 }
 
 func NewModule(db *gorm.DB, config *config.Config, r *gin.RouterGroup) *module {
-	return &module{
-		db:     db,
-		config: config,
-		r:      r,
-	}
-}
-
-func (m *module) Register() {
-	m.db.AutoMigrate(&infrastructure.UserEntity{})
-
 	// infra
-	userRepo := &infrastructure.GormUserRepository{DB: m.db}
+	userRepo := &infrastructure.GormUserRepository{DB: db}
 	bcryptHasher := &infrastructure.BcryptHasher{}
 	jwtAuthToken := &infrastructure.JWTAuthToken{
-		Secret:                []byte(m.config.JWTSecret),
+		Secret:                []byte(config.JWTSecret),
 		AccessTokenExpiresIn:  constant.AccessTokenExpiresIn,
 		RefreshTokenExpiresIn: constant.RefreshTokenExpiresIn,
 		UserRepo:              userRepo,
@@ -55,5 +47,19 @@ func (m *module) Register() {
 		SignIn: signIn,
 	}
 
-	api.RegisterRouter(m.r, handler)
+	identityMiddleware := api.IdentityMiddleware(jwtAuthToken)
+
+	return &module{
+		db:                 db,
+		config:             config,
+		r:                  r,
+		handler:            handler,
+		identifyMiddleware: identityMiddleware,
+	}
+}
+
+func (m *module) Init() {
+	m.db.AutoMigrate(&infrastructure.UserEntity{})
+	m.r.Use(m.identifyMiddleware)
+	api.RegisterRouter(m.r, m.handler)
 }

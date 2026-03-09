@@ -2,7 +2,7 @@ package api
 
 import "github.com/gin-gonic/gin"
 
-func RegisterRouter(r *gin.RouterGroup, h *todoHandler) {
+func RegisterRouter(r *gin.RouterGroup, h *Handler) {
 	g := r.Group("/todos")
 
 	g.POST("", h.HandleCreate)

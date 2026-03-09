@@ -13,11 +13,10 @@ import (
 type module struct {
 	db      *gorm.DB
 	config  *config.Config
-	r       *gin.RouterGroup
 	handler *api.Handler
 }
 
-func NewModule(db *gorm.DB, config *config.Config, r *gin.RouterGroup) *module {
+func NewModule(db *gorm.DB, config *config.Config) *module {
 	// infra
 	todoRepo := infrastructure.NewGormTodoRepository(db)
 
@@ -40,12 +39,11 @@ func NewModule(db *gorm.DB, config *config.Config, r *gin.RouterGroup) *module {
 	return &module{
 		db:      db,
 		config:  config,
-		r:       r,
 		handler: handler,
 	}
 }
 
-func (m *module) Init() {
+func (m *module) Init(r *gin.RouterGroup) {
 	m.db.AutoMigrate(&infrastructure.TodoEntity{})
-	api.RegisterRouter(m.r, m.handler)
+	api.RegisterRouter(r, m.handler)
 }

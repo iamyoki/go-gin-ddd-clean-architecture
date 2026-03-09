@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"todo_api/app/apperror"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,8 @@ import (
 func ErrorHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
+
+		fmt.Println(c.Errors)
 
 		if len(c.Errors) > 0 {
 			// capture last err

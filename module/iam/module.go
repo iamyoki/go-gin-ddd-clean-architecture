@@ -16,10 +16,10 @@ type module struct {
 	config             *config.Config
 	r                  *gin.RouterGroup
 	handler            *api.Handler
-	identifyMiddleware gin.HandlerFunc
+	identityMiddleware gin.HandlerFunc
 }
 
-func NewModule(db *gorm.DB, config *config.Config, r *gin.RouterGroup) *module {
+func NewModule(db *gorm.DB, config *config.Config) *module {
 	// infra
 	userRepo := &infrastructure.GormUserRepository{DB: db}
 	bcryptHasher := &infrastructure.BcryptHasher{}
@@ -52,14 +52,17 @@ func NewModule(db *gorm.DB, config *config.Config, r *gin.RouterGroup) *module {
 	return &module{
 		db:                 db,
 		config:             config,
-		r:                  r,
 		handler:            handler,
-		identifyMiddleware: identityMiddleware,
+		identityMiddleware: identityMiddleware,
 	}
 }
 
-func (m *module) Init() {
+func (m *module) Init(r *gin.RouterGroup) {
 	m.db.AutoMigrate(&infrastructure.UserEntity{})
-	m.r.Use(m.identifyMiddleware)
-	api.RegisterRouter(m.r, m.handler)
+	r.Use(m.identityMiddleware)
+	api.RegisterRouter(r, m.handler)
+}
+
+func (m *module) IdentityMiddleware() gin.HandlerFunc {
+	return m.identityMiddleware
 }

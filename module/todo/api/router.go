@@ -1,9 +1,13 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"todo_api/app/middleware"
+
+	"github.com/gin-gonic/gin"
+)
 
 func RegisterRouter(r *gin.RouterGroup, h *Handler) {
-	g := r.Group("/todos")
+	g := r.Group("/todos", middleware.AuthRequired())
 
 	g.POST("", h.HandleCreate)
 	g.GET("", h.HandleGetAll)

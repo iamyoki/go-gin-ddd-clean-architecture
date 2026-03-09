@@ -24,18 +24,23 @@ func main() {
 	r := gin.New()
 	r.SetTrustedProxies(nil)
 
+	// module
+	iam := iam.NewModule(db, cfg)
+	todo := todo.NewModule(db, cfg)
+
 	// global middlewares
 	r.Use(gin.Recovery())
 	r.Use(sloggin.New(logger))
 	r.Use(middleware.ErrorHandler())
 	r.Use(middleware.LimitMax(50)) // 50MB
+	r.Use(iam.IdentityMiddleware())
 
 	// api root
 	api := r.Group("/api")
 
 	// module init
-	iam.NewModule(db, cfg, api).Init()
-	todo.NewModule(db, cfg, api).Init()
+	iam.Init(api)
+	todo.Init(api)
 
 	// run server
 	r.Run(":" + cfg.AppPort)

@@ -7,11 +7,11 @@ import (
 )
 
 func RegisterRouter(r *gin.RouterGroup, h *Handler) {
-	g := r.Group("/todos", middleware.AuthRequired())
+	g := r.Group("/todos")
 
 	g.POST("", h.HandleCreate)
 	g.GET("", h.HandleGetAll)
 	g.GET(":id", h.HandleGetById)
 	g.POST(":id/complete", h.HandleComplete)
-	g.DELETE(":id", h.HandleDelete)
+	g.DELETE(":id", middleware.AuthRequired(), h.HandleDelete)
 }

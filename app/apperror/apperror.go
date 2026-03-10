@@ -1,6 +1,7 @@
 package apperror
 
 import (
+	"errors"
 	"log/slog"
 	"net/http"
 
@@ -83,4 +84,12 @@ func IntoResponse(err error) (int, gin.H) {
 	}
 
 	return status, body
+}
+
+// check if error is an apperror
+// e.g.
+// ok := apperror.Is[apperror.NotFound](err)
+func Is[T error](err error) bool {
+	var target *T
+	return errors.As(err, target)
 }
